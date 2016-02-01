@@ -19,14 +19,14 @@ def setUpPackage():
         plugin_dir = os.path.dirname(plugin.__file__)
         plugin.LibCrowdsData(plugin_dir).setup()
 
-        
+
 class TestPlugin(web.Helper):
 
 
     def test_blueprint_registered(self):
         assert 'data' in self.flask_app.blueprints
-    
-    
+
+
     @with_context
     def test_view_renders_at_expected_route(self):
         res = self.app.get('/data', follow_redirects=True)
