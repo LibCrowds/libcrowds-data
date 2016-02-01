@@ -5,7 +5,6 @@ from flask import render_template
 from pybossa.core import project_repo
 
 
-@blueprint.route('/')
 def index():
     """Return the Data page."""
     projects = project_repo.get_all()
