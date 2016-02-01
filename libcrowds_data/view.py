@@ -12,4 +12,4 @@ def index():
     title = "Data"
     description = """Download open datasets of all crowdsourced data produced
                   via LibCrowds."""
-    return render_template('/data/index.html', projects=projects)
+    return render_template('/index.html', projects=projects)
