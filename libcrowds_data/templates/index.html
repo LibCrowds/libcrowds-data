@@ -6,7 +6,7 @@
 {% block content %}
 {% include "_flash_messages_floating.html" %}
 
-<div class="splash" id="splash" style="background-image:url({{ url_for('static.static_file', filename='img/data-splash.jpg') }});">
+<div class="splash" id="splash" style="background-image:url({{ url_for('static', filename='img/data-splash.jpg') }});">
   <div class="splash-overlay vcenter hcenter" style="position:absolute;">
   </div>
 </div>
