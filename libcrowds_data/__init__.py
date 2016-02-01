@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 """
-LibCrowdsStatistics
--------------------
+LibCrowdsData
+-------------
 
 Global data repository page for LibCrowds.
 """
