@@ -1,11 +1,9 @@
 # -*- coding: utf8 -*-
 """Views modules for libcrowds-data."""
 
-from flask import Blueprint
 from flask import render_template
 from pybossa.core import project_repo
 
-blueprint = Blueprint('data', __name__)
 
 @blueprint.route('/')
 def index():
