@@ -25,8 +25,8 @@ class TestPlugin(web.Helper):
 
     def test_blueprint_registered(self):
         assert 'data' in self.flask_app.blueprints
-    
-    
+
+
     def test_static_folder_exists(self):
         bp = self.flask_app.blueprints['data']
         static_folder = os.path.abspath(bp.static_folder)
