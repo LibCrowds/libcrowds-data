@@ -16,6 +16,12 @@ Copy the [libcrowds_data](libcrowds_data) folder into your PyBossa
 plugin will be available after you next restart the server.
 
 
+## Integration
+
+If [pybossa-analyst](https://github.com/alexandermendes/pybossa-analyst) is also installed 
+then results will be made available for download on the data page.
+
+
 ## Contributing
 
 See the [CONTRIBUTING](CONTRIBUTING.md) file for guidelines on how to suggest improvements,
