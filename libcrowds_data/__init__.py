@@ -11,7 +11,7 @@ from flask import current_app as app
 from flask.ext.plugins import Plugin
 
 __plugin__ = "LibCrowdsData"
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 
 class LibCrowdsData(Plugin):

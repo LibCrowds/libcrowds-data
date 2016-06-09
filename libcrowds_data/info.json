@@ -4,6 +4,6 @@
     "author": "Alexander Mendes",
     "website": "https://github.com/LibCrowds/libcrowds-data",
     "license": "BSD",
-    "description": "Global data repository page page for LibCrowds.",
-    "version": "0.1.3"
+    "description": "Global data repository page for LibCrowds.",
+    "version": "0.1.4"
 }
