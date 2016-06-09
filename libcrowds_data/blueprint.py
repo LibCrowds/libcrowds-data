@@ -2,7 +2,7 @@
 """Blueprint module for libcrowds-data."""
 
 from flask import Blueprint
-from .view import index
+from .view import index, csv_export
 
 
 class DataBlueprint(Blueprint):
@@ -16,3 +16,5 @@ class DataBlueprint(Blueprint):
         defaults.update(kwargs)
         super(DataBlueprint, self).__init__(**defaults)
         self.add_url_rule("/", view_func=index)
+        self.add_url_rule("/<short_name>/csv_export", 
+                          view_func=csv_export)
