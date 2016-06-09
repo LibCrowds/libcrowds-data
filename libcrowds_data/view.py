@@ -7,7 +7,8 @@ from pybossa.core import project_repo
 
 def index():
     """Return the Data page."""
-    projects = project_repo.filter_by(published=True)
+    projects = [p for p in project_repo.filter_by(published=True)
+                if not p.needs_password()]
     title = "Data"
     description = """Download open datasets of all crowdsourced data produced
                   via LibCrowds."""
