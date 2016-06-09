@@ -14,7 +14,5 @@ class DataBlueprint(Blueprint):
     def __init__(self, **kwargs):
         defaults = {'name': 'data', 'import_name': __name__}
         defaults.update(kwargs)
-
         super(DataBlueprint, self).__init__(**defaults)
-
         self.add_url_rule("/", view_func=index)
