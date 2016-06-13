@@ -59,7 +59,7 @@
             <div class="col-xs-12">
                 <div class="white-panel inset-shadow-white">
                     <h3 class="text-center">Raw task data</h3>
-                    <table class="table table-stripped table-condensed table-hover table-responsive">
+                    <table class="table table-condensed table-hover table-responsive">
                         <thead>
                             <tr>
                                 <th>Project</th>
@@ -95,7 +95,7 @@
             <div class="col-xs-12">
                 <div class="white-panel inset-shadow-white">
                     <h3 class="text-center">Raw contribution data</h3>
-                        <table class="table table-stripped table-condensed table-hover table-responsive">
+                        <table class="table table-condensed table-hover table-responsive">
                         <thead>
                             <tr>
                                 <th>Project</th>
@@ -127,12 +127,11 @@
             </div>
         </div>
 
-        {% if "pybossa_analyst" in plugins %}
         <div class="row padding-bottom-md">
             <div class="col-xs-12">
                 <div class="white-panel inset-shadow-white">
-                    <h3 class="text-center">Results</h3>
-                        <table class="table table-stripped table-condensed table-hover table-responsive">
+                    <h3 class="text-center">Result data</h3>
+                        <table class="table table-condensed table-hover table-responsive">
                         <thead>
                             <tr>
                                 <th>Project</th>
@@ -143,10 +142,10 @@
                             {% for project in projects %}
                             <tr>
                                 <td>
-                                    <a href="{{ url_for('project.details', short_name=project.short_name) }}">{{project.name}}</a>
+                                    <a href="{{ url_for('data.csv_export', short_name=project.short_name) }}">{{project.name}}</a>
                                 </td>
                                 <td class="text-center">
-                                    <a href="{{url_for('analyst.export', short_name=project.short_name)}}" rel="nofollow">
+                                    <a href="{{url_for('data.csv_export', short_name=project.short_name)}}" rel="nofollow">
                                         <i class="fa fa-download"></i>
                                     </a>
                                 </td>
@@ -157,7 +156,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
 
         <div class="row">
             <div class="col-xs-12">
