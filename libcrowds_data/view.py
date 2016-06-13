@@ -35,14 +35,14 @@ def csv_export(short_name):
     secure_name = secure_filename('{0}_{1}.csv'.format(name, 'results'))
     results = result_repo.filter_by(project_id=project.id)
     if len(results) > 0:
-        keys = [r.info.keys() for r in results if r.info]
+        keys = [r.info.keys() for r in results if isinstance(r.info, dict)]
         headers = results[0].dictize().keys()
         headers += list(set(list(itertools.chain(*keys))))
         writer.writerow([h for h in headers])
 
         for row in results:
             values = results[0].dictize().items()
-            if row.info is not None:
+            if isinstance(row.info, dict):
                 values.extend([row.info.get(h, '') for h in headers])
             writer.writerow(values)
 
