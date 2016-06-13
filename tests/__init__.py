@@ -10,6 +10,7 @@ sys.path.append(os.path.abspath("./pybossa/test"))
 
 from default import with_context
 from helper import web
+from factories import ProjectFactory, TaskFactory, TaskRunFactory
 
 
 def setUpPackage():
@@ -21,6 +22,11 @@ def setUpPackage():
 
 
 class TestPlugin(web.Helper):
+
+    def setUp(self):
+        super(TestPlugin, self).setUp()
+        self.project = ProjectFactory.create()
+        self.task = TaskFactory.create(n_answers=1, state='completed')
 
     def test_blueprint_registered(self):
         assert 'data' in self.flask_app.blueprints
@@ -42,10 +48,24 @@ class TestPlugin(web.Helper):
 
     @with_context
     def test_csv_file_exported(self):
-        self.signin(email='owner@a.com', password='1234')
-        url = u'{0}/csv_eport'.format(self.base_url)
+        url = u'/{0}/csv_eport'.format(self.project.short_name)
         res = self.app.get(url, follow_redirects=True)
         content = res.headers['Content-Disposition']
         content_type = res.headers['Content-Type']
         fn = "{0}_results.csv".format(self.project.short_name)
         assert fn in content and "text/csv" in content_type
+
+
+    @with_context
+    @patch('libcrowds_data.view.UnicodeWriter.writerow')
+    def test_populated_results_written_to_csv(self, mock_writer, mock_filter):
+        TaskRunFactory.create(project=self.project, task=self.task,
+                              info={'n': 1})
+        url = u'/{0}/csv_eport'.format(self.project.short_name)
+        res = self.app.get(url, follow_redirects=True)
+
+        headers = mock_writer.call_args_list[0][0][0]
+        row = mock_writer.call_args_list[1][0][0]
+
+        assert headers == ['task_id']
+        assert row == [self.task_id]
