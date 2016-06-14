@@ -12,7 +12,8 @@ from flask import current_app as app
 from flask.ext.plugins import Plugin
 
 __plugin__ = "LibCrowdsData"
-__version__ = "0.1.4"
+__version__ =  json.load(open(os.path.join(os.path.dirname(__file__),
+                                           'info.json')))['version']
 
 
 class LibCrowdsData(Plugin):
