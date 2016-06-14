@@ -16,5 +16,4 @@ class DataBlueprint(Blueprint):
         defaults.update(kwargs)
         super(DataBlueprint, self).__init__(**defaults)
         self.add_url_rule("/", view_func=index)
-        self.add_url_rule("/<short_name>/csv_export", 
-                          view_func=csv_export)
+        self.add_url_rule("/<short_name>/csv_export", view_func=csv_export)
