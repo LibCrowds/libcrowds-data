@@ -7,6 +7,7 @@ Global data repository page for LibCrowds.
 """
 
 import os
+import default_settings
 from flask import current_app as app
 from flask.ext.plugins import Plugin
 
@@ -19,7 +20,15 @@ class LibCrowdsData(Plugin):
 
     def setup(self):
         """Setup the plugin."""
+        self.load_config()
         self.setup_blueprint()
+
+    def load_config(self):
+        """Configure the plugin."""
+        settings = [key for key in dir(default_settings) if key.isupper()]
+        for s in settings:
+            if not app.config.get(s):
+                app.config[s] = getattr(default_settings, s)
 
     def setup_blueprint(self):
         """Setup blueprint."""
