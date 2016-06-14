@@ -15,6 +15,21 @@ Copy the [libcrowds_data](libcrowds_data) folder into your PyBossa
 [plugins](https://github.com/PyBossa/pybossa/tree/master/pybossa/plugins) directory. The
 plugin will be available after you next restart the server.
 
+## Configuration
+
+The default configuration settings for libcrowds_data are:
+
+``` Python
+DATA_DISPLAY_TASKS = True
+DATA_DISPLAY_TASK_RUNS = True
+DATA_DISPLAY_RESULTS = True
+DATA_DISPLAY_FLICKR = True
+```
+
+Each settings defines whether or not a particular item will be made available for
+download via the data page. You can modify these settings by adding them to your
+main PyBossa configuration file.
+
 
 ## Contributing
 
