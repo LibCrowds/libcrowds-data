@@ -3,6 +3,7 @@
 import sys
 import os
 import libcrowds_data as plugin
+from mock import patch
 
 
 # Use the PyBossa test suite
@@ -11,6 +12,7 @@ sys.path.append(os.path.abspath("./pybossa/test"))
 from default import with_context
 from helper import web
 from factories import ProjectFactory, TaskFactory, TaskRunFactory
+from pybossa.core import result_repo
 
 
 def setUpPackage():
@@ -25,47 +27,41 @@ class TestPlugin(web.Helper):
 
     def setUp(self):
         super(TestPlugin, self).setUp()
-        self.project = ProjectFactory.create()
+        self.project = ProjectFactory.create(short_name='project')
         self.task = TaskFactory.create(n_answers=1, state='completed')
 
-    def test_blueprint_registered(self):
-        assert 'data' in self.flask_app.blueprints
-
-    def test_static_folder_exists(self):
-        bp = self.flask_app.blueprints['data']
-        static_folder = os.path.abspath(bp.static_folder)
-        assert os.path.isdir(static_folder), static_folder
-
-    def test_templates_folder_exists(self):
-        bp = self.flask_app.blueprints['data']
-        template_folder = os.path.abspath(bp.template_folder)
-        assert os.path.isdir(template_folder), template_folder
+    @with_context
+    def test_get_main_view(self):
+        res = self.app.get('/data', follow_redirects=True)
+        assert res.status_code == 200, res.status_code
 
     @with_context
-    def test_view_renders_at_expected_route(self):
-        res = self.app.get('/data', follow_redirects=True)
-        assert res.status_code == 200
+    def test_get_csv_export_view(self):
+        res = self.app.get('/data/project/csv_export', follow_redirects=True)
+        assert res.status_code == 200, res.status_code
 
     @with_context
     def test_csv_file_exported(self):
-        url = u'/{0}/csv_eport'.format(self.project.short_name)
-        res = self.app.get(url, follow_redirects=True)
+        self.signin(email='owner@a.com', password='1234')
+        res = self.app.get('/data/project/csv_export', follow_redirects=True)
         content = res.headers['Content-Disposition']
         content_type = res.headers['Content-Type']
         fn = "{0}_results.csv".format(self.project.short_name)
-        assert fn in content and "text/csv" in content_type
-
+        assert fn in content, content
+        assert "text/csv" in content_type, content_type
 
     @with_context
     @patch('libcrowds_data.view.UnicodeWriter.writerow')
-    def test_populated_results_written_to_csv(self, mock_writer, mock_filter):
-        TaskRunFactory.create(project=self.project, task=self.task,
-                              info={'n': 1})
-        url = u'/{0}/csv_eport'.format(self.project.short_name)
-        res = self.app.get(url, follow_redirects=True)
-
+    def test_correct_data_written_to_csv(self, mock_writer):
+        TaskRunFactory.create(project=self.project, task=self.task)
+        result = result_repo.filter_by(project_id=self.project.id)[0]
+        result.info = {'n': 42}
+        result_repo.update(result)
+        res = self.app.get('/data/project/csv_export', follow_redirects=True)
+        expected_headers = ['info', 'task_id', 'created', 'last_version',
+                            'task_run_ids', 'project_id', 'id', 'info_n']
+        expected_row = result.dictize().values() + [42]
         headers = mock_writer.call_args_list[0][0][0]
         row = mock_writer.call_args_list[1][0][0]
-
-        assert headers == ['task_id']
-        assert row == [self.task_id]
+        assert sorted(headers) == sorted(expected_headers)
+        assert sorted(row) == sorted(expected_row)
