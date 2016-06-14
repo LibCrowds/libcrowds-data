@@ -56,7 +56,7 @@
 <section class="padding-top-sm">
     <div class="container container-padded">
 
-        {% if app.config['DATA_DISPLAY_TASKS'] %}
+        {% if display['tasks'] %}
         <div class="row padding-bottom-md">
             <div class="col-xs-12">
                 <div class="white-panel inset-shadow-white">
@@ -94,7 +94,7 @@
         </div>
         {% endif %}
 
-        {% if app.config['DATA_DISPLAY_TASK_RUNS'] %}
+        {% if display['task_runs'] %}
         <div class="row padding-bottom-md">
             <div class="col-xs-12">
                 <div class="white-panel inset-shadow-white">
@@ -132,7 +132,7 @@
         </div>
         {% endif %}
 
-        {% if app.config['DATA_DISPLAY_RESULTS'] %}
+        {% if display['results'] %}
         <div class="row padding-bottom-md">
             <div class="col-xs-12">
                 <div class="white-panel inset-shadow-white">
@@ -164,7 +164,7 @@
         </div>
         {% endif %}
 
-        {% if app.config['DATA_DISPLAY_FLICKR'] %}
+        {% if display['flickr'] %}
         <div class="row">
             <div class="col-xs-12">
                 <div class="white-panel inset-shadow-white text-center">

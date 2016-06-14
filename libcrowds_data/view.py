@@ -2,7 +2,8 @@
 """Views modules for libcrowds-data."""
 
 import StringIO
-from flask import render_template, make_response
+import itertools
+from flask import render_template, make_response, current_app
 from pybossa.core import project_repo, result_repo
 from pybossa.util import UnicodeWriter
 from pybossa.exporter import Exporter
@@ -16,7 +17,11 @@ def index():
     title = "Data"
     description = """Download open datasets of all crowdsourced data produced
                   via LibCrowds."""
-    return render_template('/index.html', projects=projects)
+    display = {'tasks': current_app.config['DATA_DISPLAY_TASKS'],
+               'task_runs': current_app.config['DATA_DISPLAY_TASK_RUNS'],
+               'results': current_app.config['DATA_DISPLAY_RESULTS'],
+               'flickr': current_app.config['DATA_DISPLAY_FLICKR']}
+    return render_template('/index.html', projects=projects, display=display)
 
 
 def csv_export(short_name):
@@ -27,24 +32,25 @@ def csv_export(short_name):
     project = project_repo.get_by_shortname(short_name)
     if project is None:  # pragma: no cover
         abort(404)
-
     si = StringIO.StringIO()
     writer = UnicodeWriter(si)
     exporter = Exporter()
     name = exporter._project_name_latin_encoded(project)
     secure_name = secure_filename('{0}_{1}.csv'.format(name, 'results'))
     results = result_repo.filter_by(project_id=project.id)
-    if len(results) > 0:
-        keys = [r.info.keys() for r in results if isinstance(r.info, dict)]
-        headers = results[0].dictize().keys()
-        headers += list(set(list(itertools.chain(*keys))))
-        writer.writerow([h for h in headers])
+    data = []
 
-        for row in results:
-            values = results[0].dictize().items()
-            if isinstance(row.info, dict):
-                values.extend([row.info.get(h, '') for h in headers])
-            writer.writerow(values)
+    for r in results:
+        row = {k: v for k, v in r.dictize().items()}
+        if isinstance(row['info'], dict):  # Explode info
+            keys = row['info'].keys()
+            for k in keys:
+                row['info_{0}'.format(k)] = row['info'][k]
+        data.append(row)
+    headers = set(itertools.chain(*[row.keys() for row in data]))
+    writer.writerow([h for h in headers])
+    for row in data:
+        writer.writerow([row.get(h, '') for h in headers])
 
     fn = "filename={0}".format(secure_name)
     resp = make_response(si.getvalue())

@@ -20,10 +20,10 @@ plugin will be available after you next restart the server.
 The default configuration settings for libcrowds_data are:
 
 ``` Python
+DATA_DISPLAY_TASKS = True
 DATA_DISPLAY_TASK_RUNS = True
 DATA_DISPLAY_RESULTS = True
 DATA_DISPLAY_FLICKR = True
-DATA_DISPLAY_TASKS = True
 ```
 
 Each settings defines whether or not a particular item will be made available for
