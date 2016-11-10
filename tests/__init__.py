@@ -3,6 +3,7 @@
 import sys
 import os
 import libcrowds_data as plugin
+from xml.dom.minidom import parseString
 from mock import patch
 
 
@@ -80,3 +81,16 @@ class TestPlugin(web.Helper):
         row = mock_writer.call_args_list[1][0][0]
         assert sorted(headers) == sorted(expected_headers)
         assert sorted(row) == sorted(expected_row)
+
+    @with_context
+    def test_correct_data_written_to_xml(self):
+        TaskRunFactory.create(project=self.project, task=self.task)
+        result = result_repo.filter_by(project_id=self.project.id)[0]
+        result.info = {'n': 42}
+        result_repo.update(result)
+        resp = self.app.get('/data/project/xml_export', follow_redirects=True)
+        xml = ('<?xml version="1.0" encoding="UTF-8" ?><record-group>'
+               '<record><n>42</n></record></record-group>')
+        dom = parseString(xml)
+        expected = dom.toprettyxml()
+        assert resp.data == expected, resp.data
