@@ -3,6 +3,8 @@
 
 import StringIO
 import itertools
+import dicttoxml
+from xml.dom.minidom import parseString
 from flask import render_template, make_response, current_app
 from pybossa.core import project_repo, result_repo
 from pybossa.util import UnicodeWriter
@@ -56,6 +58,34 @@ def csv_export(short_name):
     resp = make_response(si.getvalue())
     resp.headers["Content-Disposition"] = "attachment; {0}".format(fn)
     resp.headers["Content-type"] = "text/csv"
+    resp.headers['Cache-Control'] = "no-store, no-cache, must-revalidate, \
+                                    post-check=0, pre-check=0, max-age=0"
+    return resp
+
+
+def xml_export(short_name):
+    """Export project results as an XML file.
+
+    :param short_name: The short name of the project.
+    """
+    project = project_repo.get_by_shortname(short_name)
+    if project is None:  # pragma: no cover
+        abort(404)
+
+    results = result_repo.filter_by(project_id=project.id)
+    data = [r.info for r in results if isinstance(r.info, dict)]
+    xml = dicttoxml.dicttoxml(data, custom_root='record-group',
+                              item_func=lambda x: 'record', attr_type=False)
+
+    exporter = Exporter()
+    name = exporter._project_name_latin_encoded(project)
+    secure_name = secure_filename('{0}_results.xml'.format(name))
+    fn = "filename={0}".format(secure_name)
+    dom = parseString(xml)
+    pretty_xml = dom.toprettyxml()
+    resp = make_response(pretty_xml)
+    resp.headers["Content-Disposition"] = "attachment; {0}".format(fn)
+    resp.headers["Content-type"] = "text/xml"
     resp.headers['Cache-Control'] = "no-store, no-cache, must-revalidate, \
                                     post-check=0, pre-check=0, max-age=0"
     return resp
