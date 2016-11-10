@@ -8,7 +8,7 @@ Global data repository page for LibCrowds.
 
 import os
 import json
-import default_settings
+from . import default_settings
 from flask import current_app as app
 from flask.ext.plugins import Plugin
 
