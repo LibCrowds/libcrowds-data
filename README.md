@@ -11,9 +11,17 @@ Global data repository page for LibCrowds, designed to integrate with the
 
 ## Installation
 
-Copy the [libcrowds_data](libcrowds_data) folder into your PyBossa
-[plugins](https://github.com/PyBossa/pybossa/tree/master/pybossa/plugins) directory. The
-plugin will be available after you next restart the server.
+Run the following commands (modified according to your PyBossa installation directory):
+
+```
+source /home/pybossa/pybossa/env/bin/activate
+cd /home/pybossa/pybossa/pybossa/plugins
+git clone https://github.com/libcrowds/libcrowds-data
+pip install -r libcrowds-data/requirements.txt
+mv libcrowds-data/libcrowds_data libcrowds_data
+rm -r libcrowds-data
+```
+The plugin will be available after you next restart the server.
 
 ## Configuration
 
