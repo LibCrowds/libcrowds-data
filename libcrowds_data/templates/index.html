@@ -148,7 +148,7 @@
                             {% for project in projects %}
                             <tr>
                                 <td>
-                                    <a href="{{ url_for('data.csv_export', short_name=project.short_name) }}">{{project.name}}</a>
+                                    <a href="{{ url_for('project.details', short_name=project.short_name) }}">{{project.name}}</a>
                                 </td>
                                 <td class="text-center">
                                     <a href="{{url_for('data.csv_export', short_name=project.short_name)}}" rel="nofollow">
