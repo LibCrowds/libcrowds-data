@@ -41,6 +41,11 @@ class TestPlugin(web.Helper):
         assert res.status_code == 200, res.status_code
 
     @with_context
+    def test_get_xml_export_view(self):
+        res = self.app.get('/data/project/xml_export', follow_redirects=True)
+        assert res.status_code == 200, res.status_code
+
+    @with_context
     def test_csv_file_exported(self):
         self.signin(email='owner@a.com', password='1234')
         res = self.app.get('/data/project/csv_export', follow_redirects=True)
@@ -49,6 +54,16 @@ class TestPlugin(web.Helper):
         fn = "{0}_results.csv".format(self.project.short_name)
         assert fn in content, content
         assert "text/csv" in content_type, content_type
+
+    @with_context
+    def test_xml_file_exported(self):
+        self.signin(email='owner@a.com', password='1234')
+        res = self.app.get('/data/project/xml_export', follow_redirects=True)
+        content = res.headers['Content-Disposition']
+        content_type = res.headers['Content-Type']
+        fn = "{0}_results.xml".format(self.project.short_name)
+        assert fn in content, content
+        assert "text/xml" in content_type, content_type
 
     @with_context
     @patch('libcrowds_data.view.UnicodeWriter.writerow')
