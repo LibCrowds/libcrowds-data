@@ -48,10 +48,10 @@
         <div class="row">
             <div class="col-lg-10 offset-lg-1">
                 {{ category_helpers.render_strip(categories) }}
-                <div class="card my-4">
-                    {{ card_helpers.render_title("Task Data", "Download raw task data", search_table="#task-data-table") }}
-                    {% for c in categories %}
-                    <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
+                {% for c in categories %}
+                <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
+                    <div class="card my-4">
+                        {{ card_helpers.render_title("Task Data", "Download raw task data", search_table="#task-data-table") }}
                         <div class="table-responsive">
                             <table id="task-data-table" class="table table-hover table-striped mb-0">
                                 {{ table_helpers.render_head(['Project Name', 'Tasks', 'CSV', 'JSON'], center_indexes=[2, 3, 4]) }}
@@ -69,12 +69,8 @@
                             </table>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="card my-4">
-                    {{ card_helpers.render_title("Contribution Data", "Download raw contribution data", search_table="#contribution-data-table") }}
-                    {% for c in categories %}
-                    <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
+                    <div class="card my-4">
+                        {{ card_helpers.render_title("Contribution Data", "Download raw contribution data", search_table="#contribution-data-table") }}
                         <div class="table-responsive">
                             <table id="task-data-table" class="table table-hover table-striped mb-0">
                                 {{ table_helpers.render_head(['Project Name', 'Contributions', 'CSV', 'JSON'], center_indexes=[2, 3, 4]) }}
@@ -92,12 +88,8 @@
                             </table>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="card my-4">
-                    {{ card_helpers.render_title("Results Data", "Download the final result data", search_table="#results-data-table") }}
-                    {% for c in categories %}
-                    <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
+                    <div class="card my-4">
+                        {{ card_helpers.render_title("Results Data", "Download the final result data", search_table="#results-data-table") }}
                         <div class="table-responsive">
                             <table id="results-data-table" class="table table-hover table-striped mb-0">
                                 {{ table_helpers.render_head(['Project Name', 'Results', 'CSV', 'XML'], center_indexes=[2, 3, 4]) }}
@@ -115,8 +107,8 @@
                             </table>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>
