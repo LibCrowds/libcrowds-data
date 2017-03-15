@@ -5,37 +5,22 @@ import StringIO
 import itertools
 import dicttoxml
 from xml.dom.minidom import parseString
-from flask import render_template, make_response, current_app
+from flask import render_template, make_response, current_app, Blueprint
 from pybossa.core import project_repo, result_repo
 from pybossa.util import UnicodeWriter
 from pybossa.exporter import Exporter
 from werkzeug.utils import secure_filename
 
 
-def index():
-    """Return the Data page."""
-    projects = [p for p in project_repo.filter_by(published=True)
-                if not p.needs_password()]
-    title = "Data"
-    return render_template('/index.html', projects=projects)
+blueprint = Blueprint('data', __name__, template_folder='templates', 
+                      static_folder='static')
 
 
-def csv_export(short_name):
-    """Export project results as a CSV file.
-
-    :param short_name: The short name of the project.
-    """
-    project = project_repo.get_by_shortname(short_name)
-    if project is None:  # pragma: no cover
-        abort(404)
+def get_csv_response(results):
+    """Return a CSV response containing result data."""
     si = StringIO.StringIO()
     writer = UnicodeWriter(si)
-    exporter = Exporter()
-    name = exporter._project_name_latin_encoded(project)
-    secure_name = secure_filename('{0}_{1}.csv'.format(name, 'results'))
-    results = result_repo.filter_by(project_id=project.id)
     data = []
-
     for r in results:
         row = {k: v for k, v in r.dictize().items()}
         if isinstance(row['info'], dict):  # Explode info
@@ -47,39 +32,57 @@ def csv_export(short_name):
     writer.writerow([h for h in headers])
     for row in data:
         writer.writerow([row.get(h, '') for h in headers])
-
-    fn = "filename={0}".format(secure_name)
-    resp = make_response(si.getvalue())
-    resp.headers["Content-Disposition"] = "attachment; {0}".format(fn)
-    resp.headers["Content-type"] = "text/csv"
-    resp.headers['Cache-Control'] = "no-store, no-cache, must-revalidate, \
-                                    post-check=0, pre-check=0, max-age=0"
-    return resp
+    return make_response(si.getvalue())
 
 
-def xml_export(short_name):
-    """Export project results as an XML file.
+def get_xml_response(results):
+    """Return an XML response containing result data."""
+    data = [r.info for r in results if isinstance(r.info, dict)]
+    xml = dicttoxml.dicttoxml(data, custom_root='record-group',
+                              item_func=lambda x: 'record', attr_type=False)
+    dom = parseString(xml)
+    pretty_xml = dom.toprettyxml()
+    return make_response(pretty_xml)
+    
+
+@blueprint.route('/')
+def index():
+    """Return the Data page."""
+    projects = [p for p in project_repo.filter_by(published=True)
+                if not p.needs_password()]
+    return render_template('/index.html', projects=projects, title="Data")
+
+
+@blueprint.route('/<short_name>/results/export')
+def export_results(short_name):
+    """Export project results as an XML or CSV file.
 
     :param short_name: The short name of the project.
     """
     project = project_repo.get_by_shortname(short_name)
     if project is None:  # pragma: no cover
         abort(404)
-
-    results = result_repo.filter_by(project_id=project.id)
-    data = [r.info for r in results if isinstance(r.info, dict)]
-    xml = dicttoxml.dicttoxml(data, custom_root='record-group',
-                              item_func=lambda x: 'record', attr_type=False)
-
+    
+    fmt = request.args.get('format')
+    export_formats = ["xml", "csv"]
+    if not fmt:
+        if len(request.args) >= 1:
+            abort(404)
+        return redirect(url_for('.index'))
+        
+    if fmt not in export_formats:
+        abort(415)
+    elif fmt == "xml":
+        data = get_xml_response(results)
+    elif fmt == "csv":
+        data = get_csv_response(results)
+    
     exporter = Exporter()
     name = exporter._project_name_latin_encoded(project)
-    secure_name = secure_filename('{0}_results.xml'.format(name))
+    secure_name = secure_filename('{0}_results.{1}'.format(name, fmt))
     fn = "filename={0}".format(secure_name)
-    dom = parseString(xml)
-    pretty_xml = dom.toprettyxml()
-    resp = make_response(pretty_xml)
     resp.headers["Content-Disposition"] = "attachment; {0}".format(fn)
-    resp.headers["Content-type"] = "text/xml"
+    resp.headers["Content-type"] = "text/{0}".format(fmt)
     resp.headers['Cache-Control'] = "no-store, no-cache, must-revalidate, \
                                     post-check=0, pre-check=0, max-age=0"
     return resp

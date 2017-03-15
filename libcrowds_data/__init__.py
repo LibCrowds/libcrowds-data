@@ -25,10 +25,5 @@ class LibCrowdsData(Plugin):
 
     def setup_blueprint(self):
         """Setup blueprint."""
-        from .blueprint import DataBlueprint
-        here = os.path.dirname(os.path.abspath(__file__))
-        template_folder = os.path.join(here, 'templates')
-        static_folder = os.path.join(here, 'static')
-        blueprint = DataBlueprint(template_folder=template_folder,
-                                  static_folder=static_folder)
+        from .view import blueprint
         app.register_blueprint(blueprint, url_prefix="/data")
