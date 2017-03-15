@@ -57,6 +57,9 @@ def index():
         projects[c.short_name] = cached_projects.get(category=c.short_name,
                                                      page=1, 
                                                      per_page=n_projects)
+        for p in projects[c.short_name]:
+            p['n_task_runs'] = cached_projects.n_task_runs(p['id'])
+            p['n_results'] = cached_projects.n_results(p['id'])
                 
     return render_template('/index.html', projects=projects,
                            categories=categories, title="Data")
