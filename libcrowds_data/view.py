@@ -17,13 +17,7 @@ def index():
     projects = [p for p in project_repo.filter_by(published=True)
                 if not p.needs_password()]
     title = "Data"
-    description = """Download open datasets of all crowdsourced data produced
-                  via LibCrowds."""
-    display = {'tasks': current_app.config['DATA_DISPLAY_TASKS'],
-               'task_runs': current_app.config['DATA_DISPLAY_TASK_RUNS'],
-               'results': current_app.config['DATA_DISPLAY_RESULTS'],
-               'flickr': current_app.config['DATA_DISPLAY_FLICKR']}
-    return render_template('/index.html', projects=projects, display=display)
+    return render_template('/index.html', projects=projects)
 
 
 def csv_export(short_name):
