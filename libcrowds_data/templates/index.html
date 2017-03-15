@@ -1,183 +1,127 @@
-{% extends "/base.html" %}
+{% extends "_layouts/splash.html" %}
 {% set active_page = "data" %}
-{% import "privacy/locked.html" as privacy %}
+{% import "_helpers/_card.html" as card_helpers %}
+{% import "_helpers/_table.html" as table_helpers %}
+{% import "_helpers/_category.html" as category_helpers %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('data.static', filename='css/styles.css') }}">
 
-<div class="alert-messages floating">
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {%if messages %}
-            {% for category, message in messages %}
-            <div id="msg_{{category}}" class="alert alert-{{category}} fade in">
-                <a class="close" data-dismiss="alert" href="#">&times;</a>
-                {{ message | safe}}
-            </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-</div>
+<div id="data-jumbotron" class="jumbotron jumbotron-fullscreen invert-navbar jumbotron-fade mb-0 d-flex align-items-center"></div>
 
-<span class="set-body-bg" data-bg="pattern-white-wall"></span>
-<div class="splash" style="background-image:url({{ url_for('data.static', filename='img/splash.jpg') }});">
-  <div class="splash-overlay vcenter hcenter">
-  </div>
-</div>
-
-    <section class="mid-grey pattern-brushed box-shadow-grey-bottom">
-        <p class="attribution">Image: William Playfair, 1823</p>
-        <div class="container container-padded">
-            <div class="col-md-11">
-                <h1 class="inset-text-grey">Data</h1>
-                <div class="lead">
-                    <p>
-                        This page contains all of the open datasets collected from, and images used within,
-                        the experimental crowdsourcing projects hosted on this platform. Everything on this page is made available
-                        under <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0</a>, meaning that
-                        it can be used without any copyright restrictions. <a href="http://labs.bl.uk/" target="_blank">BL Labs</a>
-                        are very keen for these materials to be used in innovative ways to further research into new technologies.
-                        For instance, the digitised catalogue cards used in our Convert-a-Card projects might prove useful for testing
-                        pattern recognition applications such as multi-lingual and hand-writing OCR technologies.
-                    <p>
-                        {% if "pybossa_discourse" in plugins %}
-                        Visit the <a href="{{url_for('discourse.index')}}">LibCrowds Community</a>
-                        {% else %}
-                        <a href="mailto:{{contact_email}}">Email us </a>
-                        {% endif %}
-                        if you have any further enquiries, or would simply like to tell us about how you've made use of the data.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-<section class="padding-top-sm">
-    <div class="container container-padded">
-
-        {% if display['tasks'] %}
-        <div class="row padding-bottom-md">
-            <div class="col-xs-12">
-                <div class="white-panel inset-shadow-white">
-                    <h3 class="text-center">Raw task data</h3>
-                    <table class="table table-condensed table-hover table-responsive">
-                        <thead>
-                            <tr>
-                                <th>Project</th>
-                                <th class="text-center">JSON</th>
-                                <th class="text-center">CSV</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for project in projects %}
-                            <tr>
-                                <td>
-                                    <a href="{{ url_for('project.details', short_name=project.short_name) }}">{{project.name}}</a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{url_for('project.export_to', short_name=project.short_name, type='task', format='json')}}" rel="nofollow">
-                                        <i class="fa fa-download"></i>
-                                    </a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{url_for('project.export_to', short_name=project.short_name, type='task', format='csv')}}" rel="nofollow">
-                                        <i class="fa fa-download"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        {% if display['task_runs'] %}
-        <div class="row padding-bottom-md">
-            <div class="col-xs-12">
-                <div class="white-panel inset-shadow-white">
-                    <h3 class="text-center">Raw contribution data</h3>
-                        <table class="table table-condensed table-hover table-responsive">
-                        <thead>
-                            <tr>
-                                <th>Project</th>
-                                <th class="text-center">JSON</th>
-                                <th class="text-center">CSV</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for project in projects %}
-                            <tr>
-                                <td>
-                                    <a href="{{ url_for('project.details', short_name=project.short_name) }}">{{project.name}}</a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{url_for('project.export_to', short_name=project.short_name, type='task_run', format='json')}}" rel="nofollow">
-                                        <i class="fa fa-download"></i>
-                                    </a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{url_for('project.export_to', short_name=project.short_name, type='task_run', format='csv')}}" rel="nofollow">
-                                        <i class="fa fa-download"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        {% if display['results'] %}
-        <div class="row padding-bottom-md">
-            <div class="col-xs-12">
-                <div class="white-panel inset-shadow-white">
-                    <h3 class="text-center">Result data</h3>
-                        <table class="table table-condensed table-hover table-responsive">
-                        <thead>
-                            <tr>
-                                <th>Project</th>
-                                <th class="text-center">XML</th>
-                                <th class="text-center">CSV</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for project in projects %}
-                            <tr>
-                                <td>
-                                    <a href="{{ url_for('project.details', short_name=project.short_name) }}">{{project.name}}</a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{url_for('data.xml_export', short_name=project.short_name)}}" rel="nofollow">
-                                        <i class="fa fa-download"></i>
-                                    </a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{url_for('data.csv_export', short_name=project.short_name)}}" rel="nofollow">
-                                        <i class="fa fa-download"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        {% if display['flickr'] %}
+<section>
+    <div class="container py-5">
         <div class="row">
-            <div class="col-xs-12">
-                <div class="white-panel inset-shadow-white text-center">
-                    <h3>Images</h3>
-                    <h4>Visit our <a href="http://www.flickr.com/photos/132066275@N04/albums">Flickr page</a>
-                    to view or download any of the images used in the projects.<p>
+            <div class="col-lg-10 offset-lg-1">
+                <h1 class="text-uppercase font-weight-bold display-4 text-center">Data</h1>
+                <hr class="bw-3 my-4">
+                <p class="lead">
+                    This page contains all of the open datasets generated via from the experimental crowdsourcing projects 
+                    hosted on this platform. Everything on this page is made available under 
+                    <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0</a>, meaning that
+                    it can be used by anyone without any copyright restrictions. We are very keen for these materials to be used 
+                    in innovative ways to further research into new technologies. For instance, the digitised images used as the 
+                    initial project input, alongside the results transcribed or derived by other other means might prove useful 
+                    for testing pattern recognition applications such as multi-lingual and hand-writing OCR technologies.
+                </p>
+                <p class="lead">
+                    The digitised images used in our crowdsourcing projects can generally be downloaded as datasets via 
+                    <a href="http://data.bl.uk/" target="_blank">data.bl.uk</a>.
+                </p>
+                <hr>
+                <p class="lead">
+                    Get in touch via
+                    {% if "pybossa_discourse" in plugins %}
+                    Visit the <a href="{{url_for('discourse.index')}}">the LibCrowds Community</a>
+                    {% else %}
+                    <a href="mailto:{{contact_email}}">email</a>
+                    {% endif %}
+                    to let us know how you have made use of the data, or if you have any further enquiries.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pattern-white-wall">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                {{ category_helpers.render_strip(categories) }}
+                <div class="card my-4">
+                    {{ card_helpers.render_title("Task Data", "Download raw task data", search_table="#task-data-table") }}
+                    {% for c in categories %}
+                    <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
+                        <div class="table-responsive">
+                            <table id="task-data-table" class="table table-hover table-striped mb-0">
+                                {{ table_helpers.render_head(['Project Name', 'Tasks', 'CSV', 'JSON'], center_indexes=[2, 3, 4]) }}
+                                <tbody>
+                                    {% for p in projects[c.short_name] %}
+                                    <tr>
+                                        {{ table_helpers.render_cell(p.name, url=url_for('project.details', short_name=p.short_name)) }}
+                                        {{ table_helpers.render_cell(p.n_tasks, center=True) }}
+                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task', format='csv'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task', format='csv'), btn=True, center=True) }}
+                                    </tr>
+                                    {% endfor %}
+                                    {{ table_helpers.render_no_data_row(4) }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="card my-4">
+                    {{ card_helpers.render_title("Contribution Data", "Download raw contribution data", search_table="#contribution-data-table") }}
+                    {% for c in categories %}
+                    <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
+                        <div class="table-responsive">
+                            <table id="task-data-table" class="table table-hover table-striped mb-0">
+                                {{ table_helpers.render_head(['Project Name', 'Contributions', 'CSV', 'JSON'], center_indexes=[2, 3, 4]) }}
+                                <tbody>
+                                    {% for p in projects[c.short_name] %}
+                                    <tr>
+                                        {{ table_helpers.render_cell(p.name, url=url_for('project.details', short_name=p.short_name)) }}
+                                        {{ table_helpers.render_cell(p.n_task_runs, center=True) }}
+                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='csv'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='csv'), btn=True, center=True) }}
+                                    </tr>
+                                    {% endfor %}
+                                    {{ table_helpers.render_no_data_row(4) }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="card my-4">
+                    {{ card_helpers.render_title("Results Data", "Download the final result data", search_table="#results-data-table") }}
+                    {% for c in categories %}
+                    <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
+                        <div class="table-responsive">
+                            <table id="results-data-table" class="table table-hover table-striped mb-0">
+                                {{ table_helpers.render_head(['Project Name', 'Results', 'CSV', 'XML'], center_indexes=[2, 3, 4]) }}
+                                <tbody>
+                                    {% for p in projects[c.short_name] %}
+                                    <tr>
+                                        {{ table_helpers.render_cell(p.name, url=url_for('project.details', short_name=p.short_name)) }}
+                                        {{ table_helpers.render_cell(p.n_results, center=True) }}
+                                        {{ table_helpers.render_cell('Download', url=url_for('data.export_results', short_name=p.short_name, format='csv'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download', url=url_for('data.export_results', short_name=p.short_name, format='xml'), btn=True, center=True) }}
+                                    </tr>
+                                    {% endfor %}
+                                    {{ table_helpers.render_no_data_row(4) }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        {% endif %}
     </div>
+</section>
+<section>
+    
 </section>
 {% endblock %}
