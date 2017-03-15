@@ -6,7 +6,8 @@ import itertools
 import dicttoxml
 from xml.dom.minidom import parseString
 from flask import render_template, make_response, current_app, Blueprint
-from pybossa.core import project_repo
+from flask import request
+from pybossa.core import project_repo, result_repo
 from pybossa.cache import projects as cached_projects
 from pybossa.cache import categories as cached_cat
 from pybossa.util import UnicodeWriter
@@ -81,13 +82,14 @@ def export_results(short_name):
         if len(request.args) >= 1:
             abort(404)
         return redirect(url_for('.index'))
-        
+    
+    results = result_repo.filter_by(project_id=project.id)
     if fmt not in export_formats:
         abort(415)
     elif fmt == "xml":
-        data = get_xml_response(results)
+        resp = get_xml_response(results)
     elif fmt == "csv":
-        data = get_csv_response(results)
+        resp = get_csv_response(results)
     
     exporter = Exporter()
     name = exporter._project_name_latin_encoded(project)
