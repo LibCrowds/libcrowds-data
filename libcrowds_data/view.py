@@ -6,7 +6,9 @@ import itertools
 import dicttoxml
 from xml.dom.minidom import parseString
 from flask import render_template, make_response, current_app, Blueprint
-from pybossa.core import project_repo, result_repo
+from pybossa.core import project_repo
+from pybossa.cache import projects as cached_projects
+from pybossa.cache import categories as cached_cat
 from pybossa.util import UnicodeWriter
 from pybossa.exporter import Exporter
 from werkzeug.utils import secure_filename
@@ -48,9 +50,16 @@ def get_xml_response(results):
 @blueprint.route('/')
 def index():
     """Return the Data page."""
-    projects = [p for p in project_repo.filter_by(published=True)
-                if not p.needs_password()]
-    return render_template('/index.html', projects=projects, title="Data")
+    categories = cached_cat.get_all()
+    projects = {}
+    for c in categories:
+        n_projects = cached_projects.n_count(category=c.short_name)
+        projects[c.short_name] = cached_projects.get(category=c.short_name,
+                                                     page=1, 
+                                                     per_page=n_projects)
+                
+    return render_template('/index.html', projects=projects,
+                           categories=categories, title="Data")
 
 
 @blueprint.route('/<short_name>/results/export')
