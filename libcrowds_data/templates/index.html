@@ -43,7 +43,7 @@
     </div>
 </section>
 
-<section class="pattern-white-wall">
+<section class="bg-faded">
     <div class="container py-4">
         <div class="row">
             <div class="col-lg-10 offset-lg-1">
@@ -61,7 +61,7 @@
                                         {{ table_helpers.render_cell(p.name, url=url_for('project.details', short_name=p.short_name)) }}
                                         {{ table_helpers.render_cell(p.n_tasks, center=True) }}
                                         {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task', format='csv'), btn=True, center=True) }}
-                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task', format='csv'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task', format='json'), btn=True, center=True) }}
                                     </tr>
                                     {% endfor %}
                                     {{ table_helpers.render_no_data_row(4) }}
@@ -80,7 +80,7 @@
                                         {{ table_helpers.render_cell(p.name, url=url_for('project.details', short_name=p.short_name)) }}
                                         {{ table_helpers.render_cell(p.n_task_runs, center=True) }}
                                         {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='csv'), btn=True, center=True) }}
-                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='csv'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='json'), btn=True, center=True) }}
                                     </tr>
                                     {% endfor %}
                                     {{ table_helpers.render_no_data_row(4) }}
