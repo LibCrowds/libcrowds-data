@@ -6,9 +6,7 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('data.static', filename='css/styles.css') }}">
-
 <div id="data-jumbotron" class="jumbotron jumbotron-fullscreen invert-navbar jumbotron-fade mb-0 d-flex align-items-center"></div>
-
 <section>
     <div class="container py-5">
         <div class="row">
@@ -32,9 +30,9 @@
                 <p class="lead">
                     Get in touch via
                     {% if "pybossa_discourse" in plugins %}
-                    Visit the <a href="{{url_for('discourse.index')}}">the LibCrowds Community</a>
+                    Visit the <a href="{{ url_for('discourse.index') }}">the LibCrowds Community</a>
                     {% else %}
-                    <a href="mailto:{{contact_email}}">email</a>
+                    <a href="mailto:{{ contact_email }}">email</a>
                     {% endif %}
                     to let us know how you have made use of the data, or if you have any further enquiries.
                 </p>
@@ -50,7 +48,7 @@
                 {{ category_helpers.render_strip(categories) }}
                 {% for c in categories %}
                 <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
-                    <div class="card my-4">
+                    <div class="card my-5">
                         {{ card_helpers.render_title("Task Data", "Download raw task data", search_table="#task-data-table") }}
                         <div class="table-responsive">
                             <table id="task-data-table" class="table table-hover table-striped mb-0">
@@ -69,7 +67,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="card my-4">
+                    <div class="card my-5">
                         {{ card_helpers.render_title("Contribution Data", "Download raw contribution data", search_table="#contribution-data-table") }}
                         <div class="table-responsive">
                             <table id="task-data-table" class="table table-hover table-striped mb-0">
@@ -88,7 +86,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="card my-4">
+                    <div class="card my-5">
                         {{ card_helpers.render_title("Results Data", "Download the final result data", search_table="#results-data-table") }}
                         <div class="table-responsive">
                             <table id="results-data-table" class="table table-hover table-striped mb-0">
