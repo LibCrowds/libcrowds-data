@@ -19,11 +19,6 @@ install:
   - pip install -r requirements.txt
   - cd ..
   - pip install --editable pybossa
-  - cd pybossa/pybossa/themes
-  - git clone --recursive https://github.com/LibCrowds/libcrowds-bs4-pybossa-theme
-  - cd libcrowds-bs4-pybossa-theme
-  - npm install
-  - cd ~
   - pip install pep8
 before_script:
   - redis-server --version
