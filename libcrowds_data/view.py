@@ -15,7 +15,7 @@ from pybossa.exporter import Exporter
 from werkzeug.utils import secure_filename
 
 
-blueprint = Blueprint('data', __name__, template_folder='templates', 
+blueprint = Blueprint('data', __name__, template_folder='templates',
                       static_folder='static')
 
 
@@ -46,7 +46,7 @@ def get_xml_response(results):
     dom = parseString(xml)
     pretty_xml = dom.toprettyxml()
     return make_response(pretty_xml)
-    
+
 
 @blueprint.route('/')
 def index():
@@ -56,12 +56,12 @@ def index():
     for c in categories:
         n_projects = cached_projects.n_count(category=c.short_name)
         projects[c.short_name] = cached_projects.get(category=c.short_name,
-                                                     page=1, 
+                                                     page=1,
                                                      per_page=n_projects)
         for p in projects[c.short_name]:
             p['n_task_runs'] = cached_projects.n_task_runs(p['id'])
             p['n_results'] = cached_projects.n_results(p['id'])
-                
+
     return render_template('/index.html', projects=projects,
                            categories=categories, title="Data")
 
@@ -75,14 +75,14 @@ def export_results(short_name):
     project = project_repo.get_by_shortname(short_name)
     if project is None:  # pragma: no cover
         abort(404)
-    
+
     fmt = request.args.get('format')
     export_formats = ["xml", "csv"]
     if not fmt:
         if len(request.args) >= 1:
             abort(404)
         return redirect(url_for('.index'))
-    
+
     results = result_repo.filter_by(project_id=project.id)
     if fmt not in export_formats:
         abort(415)
@@ -90,7 +90,7 @@ def export_results(short_name):
         resp = get_xml_response(results)
     elif fmt == "csv":
         resp = get_csv_response(results)
-    
+
     exporter = Exporter()
     name = exporter._project_name_latin_encoded(project)
     secure_name = secure_filename('{0}_results.{1}'.format(name, fmt))
