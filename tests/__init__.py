@@ -8,7 +8,7 @@ from mock import patch
 
 
 # Use the PyBossa test suite
-sys.path.append(os.path.abspath("./pybossa/test"))
+sys.path.append(os.path.abspath("../../../test"))
 
 from default import with_context
 from helper import web
@@ -24,6 +24,7 @@ def setUpPackage():
         plugin.LibCrowdsData(plugin_dir).setup()
 
 
+
 class TestPlugin(web.Helper):
 
     def setUp(self):
@@ -32,24 +33,22 @@ class TestPlugin(web.Helper):
         self.task = TaskFactory.create(n_answers=1, state='completed')
 
     @with_context
-    def test_get_main_view(self):
-        res = self.app.get('/data', follow_redirects=True)
-        assert res.status_code == 200, res.status_code
-
-    @with_context
     def test_get_csv_export_view(self):
-        res = self.app.get('/data/project/csv_export', follow_redirects=True)
+        res = self.app.get('/data/project/results/export?format=csv',
+                           follow_redirects=True)
         assert res.status_code == 200, res.status_code
 
     @with_context
     def test_get_xml_export_view(self):
-        res = self.app.get('/data/project/xml_export', follow_redirects=True)
+        res = self.app.get('/data/project/results/export?format=xml',
+                           follow_redirects=True)
         assert res.status_code == 200, res.status_code
 
     @with_context
     def test_csv_file_exported(self):
         self.signin(email='owner@a.com', password='1234')
-        res = self.app.get('/data/project/csv_export', follow_redirects=True)
+        res = self.app.get('/data/project/results/export?format=csv',
+                           follow_redirects=True)
         content = res.headers['Content-Disposition']
         content_type = res.headers['Content-Type']
         fn = "{0}_results.csv".format(self.project.short_name)
@@ -59,7 +58,8 @@ class TestPlugin(web.Helper):
     @with_context
     def test_xml_file_exported(self):
         self.signin(email='owner@a.com', password='1234')
-        res = self.app.get('/data/project/xml_export', follow_redirects=True)
+        res = self.app.get('/data/project/results/export?format=xml',
+                           follow_redirects=True)
         content = res.headers['Content-Disposition']
         content_type = res.headers['Content-Type']
         fn = "{0}_results.xml".format(self.project.short_name)
@@ -73,7 +73,8 @@ class TestPlugin(web.Helper):
         result = result_repo.filter_by(project_id=self.project.id)[0]
         result.info = {'n': 42}
         result_repo.update(result)
-        res = self.app.get('/data/project/csv_export', follow_redirects=True)
+        res = self.app.get('/data/project/results/export?format=csv',
+                           follow_redirects=True)
         expected_headers = ['info', 'task_id', 'created', 'last_version',
                             'task_run_ids', 'project_id', 'id', 'info_n']
         expected_row = result.dictize().values() + [42]
@@ -88,7 +89,8 @@ class TestPlugin(web.Helper):
         result = result_repo.filter_by(project_id=self.project.id)[0]
         result.info = {'n': 42}
         result_repo.update(result)
-        resp = self.app.get('/data/project/xml_export', follow_redirects=True)
+        resp = self.app.get('/data/project/results/export?format=xml',
+                            follow_redirects=True)
         xml = ('<?xml version="1.0" encoding="UTF-8" ?><record-group>'
                '<record><n>42</n></record></record-group>')
         dom = parseString(xml)
