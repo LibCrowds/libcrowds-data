@@ -6,11 +6,12 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('data.static', filename='css/styles.css') }}">
+
 <div id="data-jumbotron" class="jumbotron jumbotron-fullscreen invert-navbar jumbotron-fade mb-0">
     <div class="container text-center h-100 d-flex align-items-center justify-content-between flex-column">
         <div></div>
-        <h1 class="pb-2 text-white" data-aos="zoom-in" data-aos-duration="600">Open Data</h1>
-        <a href="#intro" data-aos="fade-up" data-aos-delay="600" data-aos-duration="400" data-aos-easing="ease-out-sine" data-aos-offset="0">
+        <div></div>
+        <a href="#intro" data-aos="fade-up" data-aos-delay="200" data-aos-easing="ease-out-sine" data-aos-offset="0">
             <p class="mb-1 text-uppercase text-white">Scroll Down</p>
             <span class="fa fa-chevron-down fa-2x text-primary pulse"></span>
         </a>
@@ -29,9 +30,9 @@
                     hosted on this platform. Everything on this page is made available under 
                     <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0</a>, meaning that
                     it can be used by anyone without any copyright restrictions. We are very keen for these materials to be used 
-                    in innovative ways to further research into new technologies. For instance, the digitised images used as the 
-                    initial project input, alongside the results transcribed or derived by other other means might prove useful 
-                    for testing pattern recognition applications such as multi-lingual and hand-writing OCR technologies.
+                    in innovative ways to further research into new technologies. For instance, the digitised images and 
+                    transcribed results might prove useful for testing pattern recognition applications such as multi-lingual 
+                    and hand-writing OCR technologies.
                 </p>
                 <p class="lead">
                     The digitised images used in our crowdsourcing projects can generally be downloaded as datasets via 
@@ -53,10 +54,16 @@
 </section>
 
 <section class="bg-faded">
-    <div class="container py-4">
+    <div class="container pt-5">
         <div class="row">
             <div class="col-lg-10 offset-lg-1">
                 {{ category_helpers.render_strip(categories) }}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
                 {% for c in categories %}
                 <div id="category-{{ c.id }}" {% if not loop.first %}style="display: none;"{% endif %}>
                     <div class="card my-5">
@@ -69,8 +76,8 @@
                                     <tr>
                                         {{ table_helpers.render_cell(p.name, url=url_for('project.details', short_name=p.short_name)) }}
                                         {{ table_helpers.render_cell(p.n_tasks, center=True) }}
-                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task', format='csv'), btn=True, center=True) }}
-                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task', format='json'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download CSV', url=url_for('project.export_to', short_name=p.short_name, type='task', format='csv'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download JSON', url=url_for('project.export_to', short_name=p.short_name, type='task', format='json'), btn=True, center=True) }}
                                     </tr>
                                     {% endfor %}
                                     {{ table_helpers.render_no_data_row(4) }}
@@ -88,8 +95,8 @@
                                     <tr>
                                         {{ table_helpers.render_cell(p.name, url=url_for('project.details', short_name=p.short_name)) }}
                                         {{ table_helpers.render_cell(p.n_task_runs, center=True) }}
-                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='csv'), btn=True, center=True) }}
-                                        {{ table_helpers.render_cell('Download', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='json'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download CSV', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='csv'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download JSON', url=url_for('project.export_to', short_name=p.short_name, type='task_run', format='json'), btn=True, center=True) }}
                                     </tr>
                                     {% endfor %}
                                     {{ table_helpers.render_no_data_row(4) }}
@@ -107,8 +114,8 @@
                                     <tr>
                                         {{ table_helpers.render_cell(p.name, url=url_for('project.details', short_name=p.short_name)) }}
                                         {{ table_helpers.render_cell(p.n_results, center=True) }}
-                                        {{ table_helpers.render_cell('Download', url=url_for('data.export_results', short_name=p.short_name, format='csv'), btn=True, center=True) }}
-                                        {{ table_helpers.render_cell('Download', url=url_for('data.export_results', short_name=p.short_name, format='xml'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download CSV', url=url_for('data.export_results', short_name=p.short_name, format='csv'), btn=True, center=True) }}
+                                        {{ table_helpers.render_cell('Download XML', url=url_for('data.export_results', short_name=p.short_name, format='xml'), btn=True, center=True) }}
                                     </tr>
                                     {% endfor %}
                                     {{ table_helpers.render_no_data_row(4) }}
