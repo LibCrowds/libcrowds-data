@@ -8,7 +8,7 @@ from mock import patch
 
 
 # Use the PyBossa test suite
-sys.path.append(os.path.abspath("../../../test"))
+sys.path.append(os.path.abspath("./pybossa/test"))
 
 from default import with_context
 from helper import web
